@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "gateway/api/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.v1";
+
+service OrderForm {
+    rpc CreateOrderForm (CreateOrderFormRequest) returns (CreateOrderFormReply);
+    rpc UpdateOrderForm (UpdateOrderFormRequest) returns (UpdateOrderFormReply);
+    rpc DeleteOrderForm (DeleteOrderFormRequest) returns (DeleteOrderFormReply);
+    rpc GetOrderForm (GetOrderFormRequest) returns (GetOrderFormReply) {
+        option (google.api.http) = {
+            get: "/orderForm/{id}",
+        };
+    };
+    rpc ListOrderForm (ListOrderFormRequest) returns (ListOrderFormReply);
+}
+
+message CreateOrderFormRequest {}
+message CreateOrderFormReply {}
+
+message UpdateOrderFormRequest {}
+message UpdateOrderFormReply {}
+
+message DeleteOrderFormRequest {}
+message DeleteOrderFormReply {}
+
+message GetOrderFormRequest {
+    int64 id = 1;
+}
+message GetOrderFormReply {
+    int64 id = 1;
+    string name = 2;
+    fixed64 price = 3;
+}
+
+message ListOrderFormRequest {}
+message ListOrderFormReply {}

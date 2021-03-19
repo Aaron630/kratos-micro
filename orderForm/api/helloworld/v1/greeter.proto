@@ -13,10 +13,20 @@ option java_outer_classname = "HelloWorldProtoV1";
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply)  {
-        option (google.api.http) = {
-            get: "/helloworld/{name}",
-        };
-    }
+    option (google.api.http) = {
+        get: "/helloworld/{name}",
+    };
+  }
+  rpc GetOrderForm (GetOrderFormRequest) returns (GetOrderFormReply) {
+    option (google.api.http) = {
+        get: "/orderForm/{id}",
+    };
+  };
+  rpc Login (LoginRequest) returns (LoginReply)  {
+    option (google.api.http) = {
+        get: "/user/login",
+    };
+  }
 }
 
 // The request message containing the user's name.
@@ -27,4 +37,24 @@ message HelloRequest {
 // The response message containing the greetings
 message HelloReply {
   string message = 1;
+}
+
+// The request message containing the user's name.
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// The response message containing the greetings
+message LoginReply {
+  string message = 1;
+}
+
+message GetOrderFormRequest {
+  int64 id = 1;
+}
+message GetOrderFormReply {
+  int64 id = 1;
+  string name = 2;
+  fixed64 price = 3;
 }

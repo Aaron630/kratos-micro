@@ -19,35 +19,34 @@ var _ = mux.NewRouter
 
 const _ = http1.SupportPackageIsVersion1
 
-type GreeterHandler interface {
+type OrderFormHandler interface {
+	CreateOrderForm(context.Context, *CreateOrderFormRequest) (*CreateOrderFormReply, error)
+
+	DeleteOrderForm(context.Context, *DeleteOrderFormRequest) (*DeleteOrderFormReply, error)
+
 	GetOrderForm(context.Context, *GetOrderFormRequest) (*GetOrderFormReply, error)
 
-	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	ListOrderForm(context.Context, *ListOrderFormRequest) (*ListOrderFormReply, error)
 
-	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	UpdateOrderForm(context.Context, *UpdateOrderFormRequest) (*UpdateOrderFormReply, error)
 }
 
-func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Handler {
+func NewOrderFormHandler(srv OrderFormHandler, opts ...http1.HandleOption) http.Handler {
 	h := http1.DefaultHandleOptions()
 	for _, o := range opts {
 		o(&h)
 	}
 	r := mux.NewRouter()
 
-	r.HandleFunc("/helloworld/{name}", func(w http.ResponseWriter, r *http.Request) {
-		var in HelloRequest
+	r.HandleFunc("/api.v1.OrderForm/CreateOrderForm", func(w http.ResponseWriter, r *http.Request) {
+		var in CreateOrderFormRequest
 		if err := h.Decode(r, &in); err != nil {
 			h.Error(w, r, err)
 			return
 		}
 
-		if err := binding.MapProto(&in, mux.Vars(r)); err != nil {
-			h.Error(w, r, err)
-			return
-		}
-
 		next := func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.SayHello(ctx, req.(*HelloRequest))
+			return srv.CreateOrderForm(ctx, req.(*CreateOrderFormRequest))
 		}
 		if h.Middleware != nil {
 			next = h.Middleware(next)
@@ -57,11 +56,59 @@ func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Hand
 			h.Error(w, r, err)
 			return
 		}
-		reply := out.(*HelloReply)
+		reply := out.(*CreateOrderFormReply)
 		if err := h.Encode(w, r, reply); err != nil {
 			h.Error(w, r, err)
 		}
-	}).Methods("GET")
+	}).Methods("POST")
+
+	r.HandleFunc("/api.v1.OrderForm/UpdateOrderForm", func(w http.ResponseWriter, r *http.Request) {
+		var in UpdateOrderFormRequest
+		if err := h.Decode(r, &in); err != nil {
+			h.Error(w, r, err)
+			return
+		}
+
+		next := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateOrderForm(ctx, req.(*UpdateOrderFormRequest))
+		}
+		if h.Middleware != nil {
+			next = h.Middleware(next)
+		}
+		out, err := next(r.Context(), &in)
+		if err != nil {
+			h.Error(w, r, err)
+			return
+		}
+		reply := out.(*UpdateOrderFormReply)
+		if err := h.Encode(w, r, reply); err != nil {
+			h.Error(w, r, err)
+		}
+	}).Methods("POST")
+
+	r.HandleFunc("/api.v1.OrderForm/DeleteOrderForm", func(w http.ResponseWriter, r *http.Request) {
+		var in DeleteOrderFormRequest
+		if err := h.Decode(r, &in); err != nil {
+			h.Error(w, r, err)
+			return
+		}
+
+		next := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteOrderForm(ctx, req.(*DeleteOrderFormRequest))
+		}
+		if h.Middleware != nil {
+			next = h.Middleware(next)
+		}
+		out, err := next(r.Context(), &in)
+		if err != nil {
+			h.Error(w, r, err)
+			return
+		}
+		reply := out.(*DeleteOrderFormReply)
+		if err := h.Encode(w, r, reply); err != nil {
+			h.Error(w, r, err)
+		}
+	}).Methods("POST")
 
 	r.HandleFunc("/orderForm/{id}", func(w http.ResponseWriter, r *http.Request) {
 		var in GetOrderFormRequest
@@ -92,15 +139,15 @@ func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Hand
 		}
 	}).Methods("GET")
 
-	r.HandleFunc("/user/login", func(w http.ResponseWriter, r *http.Request) {
-		var in LoginRequest
+	r.HandleFunc("/api.v1.OrderForm/ListOrderForm", func(w http.ResponseWriter, r *http.Request) {
+		var in ListOrderFormRequest
 		if err := h.Decode(r, &in); err != nil {
 			h.Error(w, r, err)
 			return
 		}
 
 		next := func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Login(ctx, req.(*LoginRequest))
+			return srv.ListOrderForm(ctx, req.(*ListOrderFormRequest))
 		}
 		if h.Middleware != nil {
 			next = h.Middleware(next)
@@ -110,11 +157,11 @@ func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Hand
 			h.Error(w, r, err)
 			return
 		}
-		reply := out.(*LoginReply)
+		reply := out.(*ListOrderFormReply)
 		if err := h.Encode(w, r, reply); err != nil {
 			h.Error(w, r, err)
 		}
-	}).Methods("GET")
+	}).Methods("POST")
 
 	return r
 }

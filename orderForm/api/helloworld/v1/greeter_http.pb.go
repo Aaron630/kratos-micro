@@ -20,6 +20,10 @@ var _ = mux.NewRouter
 const _ = http1.SupportPackageIsVersion1
 
 type GreeterHandler interface {
+	GetOrderForm(context.Context, *GetOrderFormRequest) (*GetOrderFormReply, error)
+
+	Login(context.Context, *LoginRequest) (*LoginReply, error)
+
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 }
 
@@ -54,6 +58,59 @@ func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Hand
 			return
 		}
 		reply := out.(*HelloReply)
+		if err := h.Encode(w, r, reply); err != nil {
+			h.Error(w, r, err)
+		}
+	}).Methods("GET")
+
+	r.HandleFunc("/orderForm/{id}", func(w http.ResponseWriter, r *http.Request) {
+		var in GetOrderFormRequest
+		if err := h.Decode(r, &in); err != nil {
+			h.Error(w, r, err)
+			return
+		}
+
+		if err := binding.MapProto(&in, mux.Vars(r)); err != nil {
+			h.Error(w, r, err)
+			return
+		}
+
+		next := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetOrderForm(ctx, req.(*GetOrderFormRequest))
+		}
+		if h.Middleware != nil {
+			next = h.Middleware(next)
+		}
+		out, err := next(r.Context(), &in)
+		if err != nil {
+			h.Error(w, r, err)
+			return
+		}
+		reply := out.(*GetOrderFormReply)
+		if err := h.Encode(w, r, reply); err != nil {
+			h.Error(w, r, err)
+		}
+	}).Methods("GET")
+
+	r.HandleFunc("/user/login", func(w http.ResponseWriter, r *http.Request) {
+		var in LoginRequest
+		if err := h.Decode(r, &in); err != nil {
+			h.Error(w, r, err)
+			return
+		}
+
+		next := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Login(ctx, req.(*LoginRequest))
+		}
+		if h.Middleware != nil {
+			next = h.Middleware(next)
+		}
+		out, err := next(r.Context(), &in)
+		if err != nil {
+			h.Error(w, r, err)
+			return
+		}
+		reply := out.(*LoginReply)
 		if err := h.Encode(w, r, reply); err != nil {
 			h.Error(w, r, err)
 		}
