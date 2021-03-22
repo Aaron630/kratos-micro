@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
+
 	"github.com/go-kratos/etcd/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 
-	v1 "gateway/api/helloworld/v1"
+	v1 "gateway/api/v1"
 	"gateway/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/errors"
@@ -14,7 +15,7 @@ import (
 )
 
 // GreeterService is a greeter service.
-type GreeterService struct {
+type UserService struct {
 	v1.UnimplementedGreeterServer
 
 	uc  *biz.GreeterUsecase
@@ -22,12 +23,12 @@ type GreeterService struct {
 }
 
 // NewGreeterService new a greeter service.
-func NewGreeterService(uc *biz.GreeterUsecase, logger log.Logger) *GreeterService {
-	return &GreeterService{uc: uc, log: log.NewHelper("service/greeter", logger)}
+func NewUserService(uc *biz.GreeterUsecase, logger log.Logger) *UserService {
+	return &UserService{uc: uc, log: log.NewHelper("service/greeter", logger)}
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
+func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
 	s.log.Infof("SayHello Received: %v", in.GetName())
 	if in.GetName() == "error" {
 		return nil, errors.NotFound("ErrorReason", in.GetName())
@@ -35,7 +36,7 @@ func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1
 	return &v1.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
 
-func (s *GreeterService) Login(ctx context.Context, in *v1.LoginRequest) (*v1.LoginReply, error) {
+func (s *UserService) Login(ctx context.Context, in *v1.LoginRequest) (*v1.LoginReply, error) {
 	//s.log.Infof("SayHello Received: %v", in.Username)
 	//
 	//return &v1.LoginReply{Message: "Hello " + in.Username}, nil
@@ -57,7 +58,7 @@ func (s *GreeterService) Login(ctx context.Context, in *v1.LoginRequest) (*v1.Lo
 	return reply, nil
 }
 
-func (s *GreeterService) GetOrderForm(ctx context.Context, in *v1.GetOrderFormRequest) (*v1.GetOrderFormReply, error) {
+func (s *UserService) GetOrderForm(ctx context.Context, in *v1.GetOrderFormRequest) (*v1.GetOrderFormReply, error) {
 	//s.log.Infof("SayHello Received: %v", in.GetId())
 	//
 	//return &v1.GetOrderFormReply{Id: in.GetId()}, nil

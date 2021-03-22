@@ -3,13 +3,12 @@ package service
 import (
 	"fmt"
 
-	"github.com/go-kratos/etcd/registry"
 	"github.com/google/wire"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewGreeterService)
+var ProviderSet = wire.NewSet(NewUserService)
 
 var EtcdCli *clientv3.Client
 
