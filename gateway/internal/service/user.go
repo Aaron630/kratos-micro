@@ -17,19 +17,16 @@ import (
 // GreeterService is a greeter service.
 type UserService struct {
 	v1.UnimplementedGreeterServer
-
-	uc  *biz.GreeterUsecase
-	log *log.Helper
 }
 
 // NewGreeterService new a greeter service.
 func NewUserService(uc *biz.GreeterUsecase, logger log.Logger) *UserService {
-	return &UserService{uc: uc, log: log.NewHelper("service/greeter", logger)}
+	return &UserService{}
 }
 
 // SayHello implements helloworld.GreeterServer
 func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
-	s.log.Infof("SayHello Received: %v", in.GetName())
+	// s.log.Infof("SayHello Received: %v", in.GetName())
 	if in.GetName() == "error" {
 		return nil, errors.NotFound("ErrorReason", in.GetName())
 	}
